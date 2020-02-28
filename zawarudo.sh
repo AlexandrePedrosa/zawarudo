@@ -1,25 +1,21 @@
 function zawarudo()
 {
-    time=8
-    [ $# -eq 1 ] && time=$1
-    if [ $time -eq 0 ]; then
-        xrandr --output DP1 --brightness -1
-        xrandr --output DP1 --brightness 1
-        return 0
-    fi
-
+    outputs=$(xrandr | grep " connected" | cut -f1 -d " ")
     echo "Toki wo Tomare!!"
     for i in $(seq 1.2 -0.1 -1.0) ; do
         sleep 0.001
-        xrandr --output DP1 --brightness $i
+        for output in $outputs; do
+            xrandr --output $output --brightness $i
+        done
     done
+    time=8
     elapsed=1
+    [ $# -eq 1 ] && time=$1
     while [ ! ${time} -eq 0 ]; do
         sleep 1
-        if [ $time -eq 1 ]; then
+        if [ $time -eq 2 ]; then
             echo "${elapsed} seconds passed!"
-            sleep 1
-        elif [ $time -gt 1 ]; then
+        elif [ $time -gt 2 ]; then
             rvalue=$(($RANDOM % 15))
             if [ $rvalue -lt 4 ]; then
                 echo "${elapsed} seconds passed!"
@@ -39,7 +35,10 @@ function zawarudo()
     echo "Therefore time goes back!"
     for j in $(seq -1.0 0.1 1.0) ; do
         sleep 0.001
-        xrandr --output DP1 --brightness $j
+        for output in $outputs; do
+            xrandr --output $output --brightness $j
+        done
     done
     sleep 1
 }
+export zawarudo
